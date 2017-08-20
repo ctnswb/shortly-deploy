@@ -19,6 +19,7 @@ module.exports = function(grunt) {
         ],
         // the location of the resulting JS file
         dest: 'dist/<%= pkg.name %>.js'
+        //dest: 'public/client/test.js'
       }
 
     },
@@ -68,8 +69,12 @@ module.exports = function(grunt) {
     watch: {
       scripts: {
         files: [
-          'public/client/**/*.js',
-          'public/lib/**/*.js',
+          'app/**/*.js',
+          'lib/**/*.js',
+          'public/**/*.js',
+          'views/**/*.js',
+          'server-config.js',
+          'server.js'
         ],
         tasks: [
           'concat',
@@ -115,10 +120,13 @@ module.exports = function(grunt) {
   ]);
 
   grunt.registerTask('build', [
+    'concat',
+    'uglify'
   ]);
 
   grunt.registerTask('upload', function(n) {
     if (grunt.option('prod')) {
+      grunt.task.run(['shell:pushToRemote']);
       // add your production server task here
     } else {
       grunt.task.run([ 'server-dev' ]);
@@ -127,22 +135,23 @@ module.exports = function(grunt) {
 
   grunt.registerTask('deploy', [
     // add your deploy tasks here
-
-    // Start your server locally using nodemon
-    //grunt.task.run([ 'server-dev' ])
-
-    // Use the live remote to push your local code up to your deployed droplet. Assuming you've already started your deployed code with nodemon you should be able to git push live master and watch your deployed code base update to the world
-
-
-    // Concatenate files before deployment (grunt-contrib-concat)
-
-    // Uglify your code before deployment. Don't forget to update your views to point to the minified versions of your css and js asset files in the public/dist folder. The folder public/dist is already .gitignored for you, but make sure that you aren't committing your compiled scripts and/or css to your Github repo  (grunt-contrib-uglify)
-
     // Run eslint before deployment. If eslint fails, the build process should exit
+    'eslint',
 
     // Run your Mocha tests before deployment. If any tests fail, the build process should exit
+    'test',
+
+    // Concatenate files before deployment (grunt-contrib-concat)
+    // Uglify your code before deployment. Don't forget to update your views to point to the minified versions of your css and js asset files in the public/dist folder. The folder public/dist is already .gitignored for you, but make sure that you aren't committing your compiled scripts and/or css to your Github repo  (grunt-contrib-uglify)
+    'build',
+
+    // Use the live remote to push your local code up to your deployed droplet. Assuming you've already started your deployed code with nodemon you should be able to git push live master and watch your deployed code base update to the world
+    'upload',
 
     //Watch your source code for changes in order to rerun any of the Grunt tasks you created as is appropriate
+    'watch',
+    // Start your server locally using nodemon
+    'server-dev'
 
 
   ]);
