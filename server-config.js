@@ -1,9 +1,11 @@
+var db = require('./app/config.js')
 var express = require('express');
 var partials = require('express-partials');
 var bodyParser = require('body-parser');
 var cookieParser = require('cookie-parser');
 var session = require('express-session');
 var util = require('./lib/utility');
+
 
 var handler = require('./lib/request-handler');
 
